@@ -1,0 +1,71 @@
+<%= form_with(model: appointment) do |form| %>
+  <div>
+    <%= form.label :title, style: "display: block" %>
+    <%= form.text_field :title %>
+  </div>
+
+  <div>
+    <%= form.label :type, style: "display: block" %>
+    <%= form.select :type, options_for_select(["online", "inperson", "phone", "message"]) %>
+  </div>
+
+  <div>
+    <%= form.label :duration, style: "display: block" %>
+    <%= form.number_field :duration %>
+  </div>
+
+  <div>
+    <%= form.label :datetime, style: "display: block" %>
+    <%= form.datetime_local_field :datetime, value: Time.now.utc.strftime("%Y-%m-%dT%H:%M:%S") %>
+  </div>
+
+  <div id="participants_fields">
+    <p class="mx-10">Participants information</p>
+    <% appointment.participants.each do |participant| %>
+      <%= form.fields_for :participants, participant do |participant_form| %>
+        <div class="participant_fields">
+          <%= participant_form.label :email, style: "display: block" %>
+          <%= participant_form.email_field :email %>
+
+          <%= participant_form.label :name, style: "display: block" %>
+          <%= participant_form.text_field :name %>
+
+          <%= participant_form.label :fee, style: "display: block" %>
+          <%= participant_form.number_field :fee %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div>
+    <%= form.button "Add Participant", type: "button", id: "add_participant_btn" %>
+  </div>
+
+  <div>
+    <%= form.submit "Create Appointment" %>
+  </div>
+<% end %>
+
+<script>
+  $(document).ready(function() {
+    var participant_fields = $('#participants_fields');
+    var add_participant_btn = $('#add_participant_btn');
+    var participant_index = <%= appointment.participants.size %>;
+
+    add_participant_btn.click(function() {
+      var new_participant_field = $('<div>', { class: 'participant_fields' });
+
+      new_participant_field.append($('<label>', { text: 'Email', style: 'display: block' }));
+      new_participant_field.append($('<input>', { name: `appointment[participants_attributes][${participant_index}][email]`, type: 'email' }));
+
+      new_participant_field.append($('<label>', { text: 'Name', style: 'display: block' }));
+      new_participant_field.append($('<input>', { name: `appointment[participants_attributes][${participant_index}][name]`, type: 'text' }));
+
+      new_participant_field.append($('<label>', { text: 'Fee', style: 'display: block' }));
+      new_participant_field.append($('<input>', { name: `appointment[participants_attributes][${participant_index}][fee]`, type: 'number' }));
+
+      participant_fields.append(new_participant_field);
+      participant_index++;
+    });
+  });
+</script>

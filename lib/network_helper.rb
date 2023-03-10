@@ -1,4 +1,7 @@
 # frozen_string_literal: true
+require 'uri'
+require 'net/http'
+require 'openssl'
 module NetworkHelper
   BASE_URL = ENV["ONCALL_BASE_URL"]
   API_KEY = ENV["ONCALL_SECRET_KEY"]
@@ -19,7 +22,7 @@ module NetworkHelper
     end
 
     { error: error_text, status: status }
-  end
+  end 
 
   private
 
